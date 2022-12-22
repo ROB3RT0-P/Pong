@@ -12,7 +12,6 @@
 		716A72F529326392003E30BC /* background.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 716A72F429326392003E30BC /* background.jpeg */; };
 		716E962A29313008005F7409 /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 716E962929313008005F7409 /* ResourcePath.mm */; };
 		716E962D29313008005F7409 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716E962C29313008005F7409 /* main.cpp */; };
-		716E963229313008005F7409 /* nice_music.ogg in Resources */ = {isa = PBXBuildFile; fileRef = 716E963129313008005F7409 /* nice_music.ogg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,7 +23,6 @@
 		716E962929313008005F7409 /* ResourcePath.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourcePath.mm; sourceTree = "<group>"; };
 		716E962B29313008005F7409 /* ResourcePath.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResourcePath.hpp; sourceTree = "<group>"; };
 		716E962C29313008005F7409 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		716E963129313008005F7409 /* nice_music.ogg */ = {isa = PBXFileReference; lastKnownFileType = file; name = nice_music.ogg; path = ../nice_music.ogg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +77,6 @@
 			children = (
 				716A72F429326392003E30BC /* background.jpeg */,
 				716A72F229325954003E30BC /* gameFont.ttf */,
-				716E963129313008005F7409 /* nice_music.ogg */,
 				715B38252932889800841745 /* icon.png */,
 			);
 			path = Resources;
@@ -146,7 +143,6 @@
 			files = (
 				715B38262932889800841745 /* icon.png in Resources */,
 				716A72F329325954003E30BC /* gameFont.ttf in Resources */,
-				716E963229313008005F7409 /* nice_music.ogg in Resources */,
 				716A72F529326392003E30BC /* background.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -281,6 +277,7 @@
 				"EXCLUDED_ARCHS[sdk=*]" = arm64;
 				INFOPLIST_FILE = "Game_Project/Game_Project-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -292,6 +289,7 @@
 				"EXCLUDED_ARCHS[sdk=*]" = arm64;
 				INFOPLIST_FILE = "Game_Project/Game_Project-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = "$(RECOMMENDED_MACOSX_DEPLOYMENT_TARGET)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
