@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		715B38262932889800841745 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 715B38252932889800841745 /* icon.png */; };
 		716A72F329325954003E30BC /* gameFont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 716A72F229325954003E30BC /* gameFont.ttf */; };
-		716A72F529326392003E30BC /* background.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 716A72F429326392003E30BC /* background.jpeg */; };
 		716E962A29313008005F7409 /* ResourcePath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 716E962929313008005F7409 /* ResourcePath.mm */; };
 		716E962D29313008005F7409 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 716E962C29313008005F7409 /* main.cpp */; };
 /* End PBXBuildFile section */
@@ -17,7 +16,6 @@
 /* Begin PBXFileReference section */
 		715B38252932889800841745 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		716A72F229325954003E30BC /* gameFont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = gameFont.ttf; sourceTree = "<group>"; };
-		716A72F429326392003E30BC /* background.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = background.jpeg; sourceTree = "<group>"; };
 		716E962429313008005F7409 /* Game_Project.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Game_Project.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		716E962829313008005F7409 /* Game_Project-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Game_Project-Info.plist"; path = "../Game_Project-Info.plist"; sourceTree = "<group>"; };
 		716E962929313008005F7409 /* ResourcePath.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ResourcePath.mm; sourceTree = "<group>"; };
@@ -75,7 +73,6 @@
 		716E962E29313008005F7409 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				716A72F429326392003E30BC /* background.jpeg */,
 				716A72F229325954003E30BC /* gameFont.ttf */,
 				715B38252932889800841745 /* icon.png */,
 			);
@@ -143,7 +140,6 @@
 			files = (
 				715B38262932889800841745 /* icon.png in Resources */,
 				716A72F329325954003E30BC /* gameFont.ttf in Resources */,
-				716A72F529326392003E30BC /* background.jpeg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
