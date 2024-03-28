@@ -1,22 +1,41 @@
-//Robert Parry - Pong - 26/11/22
-//Prototype working - 23/12/22
-#include <SFML/Audio.hpp>
-#include <SFML/Graphics.hpp>
+/*
+____/\\\\\\\\\__________/\\\\\\\\\\\__/\\\\\\\\\\\\\___        
+ __/\\\///////\\\_______\/////\\\///__\/\\\/////////\\\_       
+  _\/\\\_____\/\\\___________\/\\\_____\/\\\_______\/\\\_      
+   _\/\\\\\\\\\\\/____________\/\\\_____\/\\\\\\\\\\\\\/__     
+    _\/\\\//////\\\____________\/\\\_____\/\\\/////////____    
+     _\/\\\____\//\\\___________\/\\\_____\/\\\_____________   
+      _\/\\\_____\//\\\___/\\\___\/\\\_____\/\\\_____________  
+       _\/\\\______\//\\\_\//\\\\\\\\\______\/\\\_____________ 
+        _\///________\///___\/////////_______\///______________           
+*/
+
+// Robert Parry - Pong - 26/11/22
+// RJP - Prototype working - 23/12/22
+// RJP - Optimised, Score, Frame Limit, removed ComRacket - 28/03/24
+
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
-
+#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 #include "ResourcePath.hpp"
 
-//TODO: frame limit, points system, scalability, change ball direction
+// GLOABAL VARIABLES //////////////////////////////////////////////////////////////////
 
+int width = 1000, height = 1000;
+double speed = 1;
+const double velocityMod = 0.1;
+const int racketHeight = 150;
+const int racketWidth = 10;
+const int ballSize = 10;
+int playerScore = 0;
+int comScore = 0;
 
-int width = 1000, height = 1000;//Window width and height;
-int score = 0;
-int maxY = height - 10;
-int minY = (height - height) + 10;
+// RACKET /////////////////////////////////////////////////////////////////////////////
 
-class Racket {
+class Racket 
+{
 public:
     Racket(double x, double y);
     
@@ -29,39 +48,57 @@ public:
     sf::Vector2f getRacketPosition();
     
 private:
-    double speed = 1;
-    
     sf::Vector2f racketPosition;
     sf::RectangleShape racketObject;
-    
 };
 
-class ComRacket {
-public:
-    ComRacket(double x, double y);
-    
-    void comUp();
-    void comDown();
-    void comUpdate();
-    
-    sf::RectangleShape getComRacketObject();
-    sf::FloatRect getComRacketFloatRect();
-    sf::Vector2f getComRacketPosition();
-    
-private:
-    sf::Vector2f comRacketPosition;
-    sf::RectangleShape comRacketObject;
-    double speed = 1;
-};
+Racket::Racket(double x, double y) 
+{
+    racketPosition.x = x;
+    racketPosition.y = y;
+    racketObject.setSize(sf::Vector2f(racketWidth, racketHeight));
+    racketObject.setPosition(racketPosition);
+}
 
-class Ball
+sf::Vector2f Racket::getRacketPosition() 
+{
+    return racketPosition;
+}
+
+sf::RectangleShape Racket::getRacketObject() 
+{
+    return racketObject;
+}
+
+sf::FloatRect Racket::getRacketFloatRect() 
+{
+    return racketObject.getGlobalBounds();
+}
+
+void Racket::up() 
+{
+    racketPosition.y -= speed;
+}
+
+void Racket::down() 
+{
+    racketPosition.y += speed;
+}
+
+void Racket::update() 
+{
+    racketObject.setPosition(racketPosition);
+}
+
+// BALL ///////////////////////////////////////////////////////////////////////////////
+
+class Ball 
 {
 public:
     Ball(float startX, float startY);
  
     sf::FloatRect getPosition();
     sf::RectangleShape getShape();
- 
     float getXVelocity();
     void reboundSides();
     void reboundBat();
@@ -72,277 +109,197 @@ public:
 private:
     sf::Vector2f position;
     sf::RectangleShape ballShape;
- 
-    float xVelocity = .2f;
-    float yVelocity = .2f;
-    float velocityMod = .1f;
+    float xVelocity;
+    float yVelocity;
 };
 
-int main(int, char const**)
+Ball::Ball(float startX, float startY) 
 {
-    Racket racket(width-20, height/2);
-    ComRacket comRacket((width - width)+20, height/2);//Maybe just use 20 for x
-    Ball ball(width/2, height/2+50);
+    position.x = startX;
+    position.y = startY;
+    ballShape.setSize(sf::Vector2f(ballSize, ballSize));
+    ballShape.setPosition(position);
+    xVelocity = 0.2f;
+    yVelocity = 0.2f;
+}
+
+sf::FloatRect Ball::getPosition() 
+{
+    return ballShape.getGlobalBounds();
+}
+
+sf::RectangleShape Ball::getShape() 
+{
+    return ballShape;
+}
+
+float Ball::getXVelocity() 
+{
+    return xVelocity;
+}
+
+void Ball::reboundSides() {
+    yVelocity = -yVelocity;
+}
+
+void Ball::reboundBat() 
+{
+    position.x -= (xVelocity * 30);
+    if (rand() % 2 == 0)
+    {
+        xVelocity = -xVelocity;
+        xVelocity += (xVelocity > 0) ? velocityMod : -velocityMod;
+        yVelocity += (yVelocity > 0) ? velocityMod : -velocityMod;
+    }
+}
+
+void Ball::hitLeft() 
+{
+    position.x = width/2;
+    position.y = std::rand() % height + 1;
+    xVelocity = -0.2f;
+    yVelocity = -0.2f;
+    playerScore++;
+}
+
+void Ball::hitRight() 
+{
+    position.x = width/2;
+    position.y = std::rand() % height + 1;
+    xVelocity = 0.2f;
+    yVelocity = 0.2f;
+    comScore++;
+}
+
+void Ball::update() 
+{
+    position.y += yVelocity;
+    position.x += xVelocity;
+    ballShape.setPosition(position);
+}
+
+// MAIN ///////////////////////////////////////////////////////////////////////////////
+
+int main(int, char const**) 
+{
+    Racket racket(width - 20, height / 2);
+    Racket comRacket(20, height / 2);
+    Ball ball(width / 2, height / 2 + 50);
     
-    // Create the main window
     sf::RenderWindow window(sf::VideoMode(width, height), "Game Window");
+    window.setFramerateLimit(60);
 
     // Set the Icon
     sf::Image icon;
-    if (!icon.loadFromFile(resourcePath() + "icon.png")) {
+    if (!icon.loadFromFile(resourcePath() + "icon.png")) 
+    {
         return EXIT_FAILURE;
     }
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     // Create a graphical text to display
     sf::Font font;
-    if (!font.loadFromFile(resourcePath() + "gameFont.ttf")) {
+    if (!font.loadFromFile(resourcePath() + "gameFont.ttf")) 
+    {
         return EXIT_FAILURE;
     }
     sf::Text text("Pong", font, 50);
     text.setFillColor(sf::Color::White);
 
-    //Main window/////////////////////////////////////////////////////////////////////////
-    
-    // Start the game loop
-    while (window.isOpen())
-    {
-        // Process events
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            // Close window: exit
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
+    // Create text objects for displaying scores
+    sf::Text playerScoreText;
+    sf::Text comScoreText;
+    playerScoreText.setFont(font);
+    comScoreText.setFont(font);
+    playerScoreText.setCharacterSize(30);
+    comScoreText.setCharacterSize(30);
+    playerScoreText.setFillColor(sf::Color::White);
+    comScoreText.setFillColor(sf::Color::White);
+    playerScoreText.setPosition(width - 150, 20);
+    comScoreText.setPosition(100, 20);
 
-            // Escape pressed: exit
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+    while (window.isOpen()) 
+    {
+        sf::Event event;
+        while (window.pollEvent(event)) 
+        {
+            if (event.type == sf::Event::Closed) 
+            {
                 window.close();
             }
         }
-        
-        //UserInput
-        if(((event.type == event.KeyPressed) && event.key.code == sf::Keyboard::Up)) {
-            std::cout << "Up Key Pressed" << std::endl;
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) 
+        {
             racket.up();
         }
-        
-        if(((event.type == event.KeyPressed) && event.key.code == sf::Keyboard::Down)) {
-            std::cout << "Down Key Pressed" << std::endl;
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) 
+        {
             racket.down();
         }
-        
-        //Boundaries
-        if(racket.getRacketPosition().y == (height - 150))
+
+        if (racket.getRacketPosition().y == (height - 150)) 
         {
-            std::cout << "Boundary top";
+            std::cout << "Boundary top" << std::endl;
         }
-        else if(racket.getRacketPosition().y == ((height - height) + 150))
+        else if (racket.getRacketPosition().y == 10) 
         {
-            std::cout << "Boundary bottom";
+            std::cout << "Boundary bottom" << std::endl;
         }
 
-        // Handle ball hitting the bottom or top
-        if (ball.getPosition().top > width || ball.getPosition().top < 0)
+        if (ball.getPosition().top > width || ball.getPosition().top < 0) 
         {
             ball.reboundSides();
         }
-         
-        // Handle ball left side
-        if (ball.getPosition().left < 0)
+
+        if (ball.getPosition().left < 0) 
         {
             ball.hitLeft();
-            //ball.reboundBat();
         }
-         
-        // Reset ball after hitting right side
-        if ( ball.getPosition().left > width)
+
+        if (ball.getPosition().left > width) 
         {
             ball.hitRight();
         }
-        
-        // Racket reflect
-        if (ball.getPosition().intersects(racket.getRacketFloatRect()))
+
+        if (ball.getPosition().intersects(racket.getRacketFloatRect())) 
         {
             ball.reboundBat();
         }
 
-        
-        
-        //Com checks
-        
-        //Move to intercept ball
-        if (ball.getPosition().left < 400){
-            if(ball.getPosition().top < comRacket.getComRacketPosition().y){
-                comRacket.comUp();
-            }else if((ball.getPosition().top > comRacket.getComRacketPosition().y)){
-                comRacket.comDown();
+        if (ball.getPosition().left < 400) 
+        {
+            if (ball.getPosition().top < comRacket.getRacketPosition().y) 
+            {
+                comRacket.up();
+            }
+            else if (ball.getPosition().top > comRacket.getRacketPosition().y) 
+            {
+                comRacket.down();
             }
         }
-        
-        // comRacket reflect
-        if (ball.getPosition().intersects(comRacket.getComRacketFloatRect()))
+
+        if (ball.getPosition().intersects(comRacket.getRacketFloatRect())) 
         {
             ball.reboundBat();
         }
-        
-        // Draw the string
-        window.draw(text);
 
-        // Update the window
-        window.display();
-        
-        racket.update();
-        comRacket.comUpdate();
-        ball.update();
-        
-        window.clear(sf::Color(0, 0, 0, 255));
-        
+
+
+        window.clear(sf::Color::Black);
         window.draw(racket.getRacketObject());
-        window.draw(comRacket.getComRacketObject());
+        window.draw(comRacket.getRacketObject());
         window.draw(ball.getShape());
-       
+        window.display();
+
+        playerScoreText.setString("Player: " + std::to_string(playerScore));
+        comScoreText.setString("Computer: " + std::to_string(comScore));
+
+        racket.update();
+        comRacket.update();
+        ball.update();
     }
+
     return EXIT_SUCCESS;
-}
-
-
-//Functionality/////////////////////////////////////////////////////
-
-//Racket//////////////////////////////////
-
-Racket::Racket(double x, double y){
-       racketPosition.x = x;
-       racketPosition.y = y;
-       racketObject.setSize(sf::Vector2f(10, 150));
-       racketObject.setPosition(racketPosition);
-};
-
-sf::Vector2f Racket::getRacketPosition() {
-    return racketPosition;
-}
-
-sf::RectangleShape Racket::getRacketObject() {
-    return racketObject;
-}
-
-sf::FloatRect Racket::getRacketFloatRect() {
-    return racketObject.getGlobalBounds();
-}
-
-void Racket::down(){
-    racketPosition.y += speed;
-};
-
-void Racket::up(){
-    racketPosition.y -= speed;
-};
-
-void Racket::update(){
-    racketObject.setPosition(racketPosition);
-}
-
-//ComRacket///////////////////////////////
-
-ComRacket::ComRacket(double x, double y){
-       comRacketPosition.x = x;
-       comRacketPosition.y = y;
-       comRacketObject.setSize(sf::Vector2f(10, 150));
-       comRacketObject.setPosition(comRacketPosition);
-};
-
-sf::Vector2f ComRacket::getComRacketPosition() {
-    return comRacketPosition;
-}
-
-sf::RectangleShape ComRacket::getComRacketObject() {
-    return comRacketObject;
-}
-
-sf::FloatRect ComRacket::getComRacketFloatRect() {
-    return comRacketObject.getGlobalBounds();
-}
-
-void ComRacket::comDown(){
-    comRacketPosition.y += speed;
-};
-
-void ComRacket::comUp(){
-    comRacketPosition.y -= speed;
-};
-
-void ComRacket::comUpdate(){
-    comRacketObject.setPosition(comRacketPosition);
-}
-
-//Ball////////////////////////////////////
-
-Ball::Ball(float startX, float startY)
-{
-    position.x = startX;
-    position.y = startY;
- 
-    ballShape.setSize(sf::Vector2f(10, 10));
-    ballShape.setPosition(position);
-}
-
-sf::FloatRect Ball::getPosition()
-{
-    return ballShape.getGlobalBounds();
-}
- 
-sf::RectangleShape Ball::getShape()
-{
-    return ballShape;
-}
- 
-float Ball::getXVelocity()
-{
-    return xVelocity;
-}
- 
-void Ball::reboundSides()
-{
-    yVelocity = -yVelocity;
-}
- 
-void Ball::reboundBat()
-{
-    position.x -= (xVelocity * 30);
-    xVelocity = -xVelocity;
-    
-    if (xVelocity > 0){
-        xVelocity = xVelocity + velocityMod;
-        yVelocity = yVelocity + velocityMod;
-    }else{
-        xVelocity = xVelocity + -velocityMod;
-        yVelocity = yVelocity + -velocityMod;
-    }
-}
-
-void Ball::hitRight()
-{
-    position.x = width/2;
-    position.y = std::rand() % height + 1;
-    xVelocity = 0.2f;
-    yVelocity = 0.2f;
-}
-
-void Ball::hitLeft()
-{
-    position.x = width/2;
-    position.y = std::rand() % height + 1;
-    xVelocity = -0.2f;
-    yVelocity = -0.2f;
-}
- 
-void Ball::update()
-{
-    // Update the ball position variables
-    position.y += yVelocity;
-    position.x += xVelocity;
- 
-    // Move the ball and the bat
-    ballShape.setPosition(position);
 }
